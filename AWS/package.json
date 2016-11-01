@@ -1,0 +1,10 @@
+{
+  "name": "aws",
+  "version": "0.0.0",
+  "description": "AWS",
+  "main": "app.js",
+  "author": {
+    "name": "Fshaikh",
+    "email": ""
+  }
+}
