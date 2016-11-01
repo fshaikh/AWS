@@ -79,7 +79,8 @@
             key: '',
             body: {},
             fileName: '',
-            useBody:false
+            useBody: false,
+            contentType:''
         }
     });
 
@@ -98,6 +99,13 @@
             size:0,
             key: '',
             versionId: ''
+        }
+    });
+
+    FP.define('AWS.S3.ObjectDeleteRequest', {
+        extend: 'AWS.S3.ObjectGetRequest',
+        config: {
+            mfa:''
         }
     });
 })();

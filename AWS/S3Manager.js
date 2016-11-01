@@ -107,7 +107,7 @@
             var params = {};
             
             // Read file using node file api
-            fs.readFile(objectUploadRequest.fileName,'utf8', function (err, data) {
+            fs.readFile(objectUploadRequest.getFileName(),function (err, data) {
                 if (err) {
                     callback(err);
                 } else {
@@ -129,7 +129,7 @@
             };
 
             // Make S3 web service call to fetch the object data
-            this.s3.getObject(params, function (err, data) {
+            me.s3.getObject(params, function (err, data) {
                 if (err) {
                     callback(err);
                 } else {
@@ -139,8 +139,19 @@
             });
 
         },
+        
+        // This function deletes an object given its key and bucket name
+        deleteObject : function (objectDeleteRequest, callback){
+            var me = this;
 
+            var params = {
+                Bucket : objectDeleteRequest.getName(),
+                Key : objectDeleteRequest.getKey()
+            };
 
+            // Make S3 web service call to delete the object
+            this.s3.deleteObject(params, callback);
+        },
 
         // Private functions:
         _handleListBucketsSuccess: function (data, isDetails, buckets,callback){
@@ -205,7 +216,8 @@
                 Bucket : objectUploadRequest.getName(),
                 Key : objectUploadRequest.getKey(),
                 Body : objectUploadRequest.getBody(),
-                Metadata: objectUploadRequest.getMetadata()
+                Metadata: objectUploadRequest.getMetadata(),
+                ContentType: objectUploadRequest.getContentType()
             };
             
             return params;

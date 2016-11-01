@@ -13,15 +13,10 @@ Get list of objects in a bucket - DONE
 
 Create a bucket - DONE
 Modify bucket configuration
-  Logging
-       Understand what logging is?
-       enable and see it in action
-  Events
-  Lifecycle
   Tags - DONE
 
 Add files to a bucket 
-  Add image file  - 
+  Add image file  - DONE
   Add txt file    - DONE
 Add metadata to objects - DONE .
    All tag keys are prefixed with x-amz-meta-
@@ -29,11 +24,17 @@ Add metadata to objects - DONE .
 Download object
    Txt content - DONE
    Blob content - DONE
-   Image
+   Image - DONE
 
 Delete
-  Object
+  Object - DONE
   Bucket
+
+Upload large files using multi-part
+Bucket Logging
+S3 Events
+Lifecycle management
+
 
 Pre-reqs
 npm install aws-sdk

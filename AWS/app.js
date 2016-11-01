@@ -3,7 +3,7 @@ var FP = require('./FPModule-0.1.0.js').FP;
 require('./S3Manager.js');
 var fs = require('fs');
 
-console.log(AWS.S3.Location.EU);
+
 var s3Manager = FP.create('AWS.S3.S3Manager');
 s3Manager.getBuckets(false,function (err, data) {
     var length = data.length;
@@ -53,18 +53,19 @@ s3Manager.getBuckets(false,function (err, data) {
 //    }
 //});
 
-//var objectUploadRequest = FP.create('AWS.S3.ObjectUploadRequest', {
-//    fileName: 'C:\\Users\\Fshaikh\\Pictures\\SO-Architecture-Overview-Logical.svg',
-//    key: 'so-architecture',
+//var objectuploadrequest = FP.create('AWS.S3.ObjectUploadRequest', {
+//    fileName: 'C:\\Users\\Fshaikh\\Pictures\\Fla-Vor-Ice-Pop-Cupcakes.png',
+//    key: 'tennis',
 //    name: 'fromapp',
 //    useBody: false,
 //    metadata: {
-//        'Type' : 'SVG',
-//        'Holder':'Furqan'
-//    }
+//        'type' : 'png',
+//        'holder': 'furqan shaikh'
+//    },
+//    contentType:'image/png'
 //});
 
-//s3Manager.uploadFile(objectUploadRequest, function (err, data) {
+//s3Manager.uploadFile(objectuploadrequest, function (err, data) {
 //    if (err) {
 //        console.log(err);
 //    } else {
@@ -72,19 +73,32 @@ s3Manager.getBuckets(false,function (err, data) {
 //    }
 //});
 
-var getObjectRequest = FP.create('AWS.S3.ObjectGetRequest', {
-    name : 'fromapp',
-    key:'so-architecture'
+//var getObjectRequest = FP.create('AWS.S3.ObjectGetRequest', {
+//    name : 'fromapp',
+//    key:'tennis'
+//});
+
+//s3Manager.downloadObject(getObjectRequest, function (err, getObjectResponse) {
+//    if (err) {
+//        console.log(err);
+//    } else {
+//        console.log(getObjectResponse.getBody());
+//        fs.writeFile('C:\\Users\\Fshaikh\\Pictures\\tennis1.png', getObjectResponse.getBody(),function (err) {
+//            console.log(err);
+//        });
+//    }
+//});
+
+var deleteObjectRequest = FP.create('AWS.S3.ObjectDeleteRequest', {
+    name: 'fromapp',
+    key:'ps'
 });
 
-s3Manager.downloadObject(getObjectRequest, function (err, getObjectResponse) {
+s3Manager.deleteObject(deleteObjectRequest, function (err, data) {
     if (err) {
         console.log(err);
     } else {
-        console.log(getObjectResponse.getBody());
-        fs.writeFile('C:\\Users\\Fshaikh\\Pictures\\so.svg', getObjectResponse.getBody(),function (err) {
-            console.log(err);
-        });
+        console.log(data);
     }
 });
 
