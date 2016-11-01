@@ -21,7 +21,7 @@ Modify bucket configuration
   Tags - DONE
 
 Add files to a bucket 
-  Add image file  - DONE
+  Add image file  - 
   Add txt file    - DONE
 Add metadata to objects - DONE .
    All tag keys are prefixed with x-amz-meta-
