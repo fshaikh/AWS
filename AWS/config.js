@@ -3,8 +3,8 @@
 
     config.region = 'us-west-2';
     config.credentials = {};
-    config.credentials.AWSAccessKey = 'AKIAJVHMXM7IMIOE3CJQ';
-    config.credentials.AWSSecretKey = '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';
+    config.credentials.AWSAccessKey = 'Put access key here';
+    config.credentials.AWSSecretKey = 'Put secret key here';
 
     return config;
 })();
