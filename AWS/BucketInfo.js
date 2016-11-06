@@ -83,6 +83,13 @@
             contentType:''
         }
     });
+    
+    FP.define('AWS.S3.ObjectMultiPartUploadResponse', {
+        extend: 'AWS.S3.BaseObjectInfo',
+        config: {
+            uploadId:''
+        }
+    });
 
     FP.define('AWS.S3.ObjectGetRequest', {
         extend: 'AWS.S3.BaseObjectInfo',

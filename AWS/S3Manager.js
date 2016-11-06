@@ -9,7 +9,8 @@
     
     FP.define('AWS.S3.S3Manager', {
         config: {
-            s3: {}
+            s3: {},
+            partsCount:0
         },
         
         constructor: function (){
@@ -112,13 +113,66 @@
                     callback(err);
                 } else {
                     objectUploadRequest.body = data;
-                    var params = me._getFileObjectUploadParams(objectUploadRequest);
+                    var params = me._getFileObjectUploadParams(objectUploadRequest,true);
                     me.s3.upload(params, function (err, data) {
                         callback(err, data);
                     });
                 }
             });
         },
+        
+        // This function uploads a file using multi-part upload algorithm. Client needs to pass the file name or stream
+        uploadFileMultiPart : function (objectUploadRequest, callback){
+            var me = this;
+            var params = {};
+            var partSize = 5 * 1024 * 1024; // 5 MB partsize . Change depending on scenarios
+            var fileSize = 0;
+            var fileName = objectUploadRequest.getFileName();
+            var uploadId;
+            var multiPartUpload = {
+                Parts:[]
+            };
+            var startTime = new Date();
+            
+            // Initiate a multipart upload
+            var uploadParamsInit = me._getFileObjectUploadParams(objectUploadRequest, false);
+            this.s3.createMultipartUpload(uploadParamsInit, function (err, data) {
+                 if (err) {
+                    callback(err);
+                } else {
+                    uploadId = data.UploadId;
+                    // Read the file using node file api
+                       fs.readFile(objectUploadRequest.getFileName(), function (err, data) {
+                            if (err) {
+                                callback(err);
+                            } else {
+                                fileSize = data.length;
+                                if (fileSize < partSize) {
+                                    partsCount = 1;
+                                } else {
+                                    partsCount = Math.ceil(fileSize / partSize);
+                            }
+                            var partNumber = 0;
+                            for (var start = 0; start < data.length; start += partSize) {
+                                partNumber++;
+                                var end = Math.min(start + partSize, data.length);
+                                var uploadPartParams = {
+                                    Bucket : objectUploadRequest.getName(),
+                                    Key: objectUploadRequest.getKey(),
+                                    PartNumber: partNumber,
+                                    UploadId : uploadId,
+                                    Body : data.slice(start, end)
+                                };
+                                
+                                console.log('Uploading part: #', uploadPartParams.PartNumber, ', Range start:', start);
+                                me._uploadPart(me, uploadPartParams, multiPartUpload, objectUploadRequest, uploadId, callback, startTime);
+                            }
+                            }
+                        });
+                }
+            });
+        },
+
         
         // This function downloads an object given its key and bucket name
         downloadObject: function (objectGetRequest, callback){
@@ -211,14 +265,16 @@
             return s3Tags;
         },
 
-        _getFileObjectUploadParams: function (objectUploadRequest) {
+        _getFileObjectUploadParams: function (objectUploadRequest,includeBody) {
             var params = {
                 Bucket : objectUploadRequest.getName(),
                 Key : objectUploadRequest.getKey(),
-                Body : objectUploadRequest.getBody(),
                 Metadata: objectUploadRequest.getMetadata(),
                 ContentType: objectUploadRequest.getContentType()
             };
+            if (includeBody) {
+                params.Body = objectUploadRequest.getBody()
+            }
             
             return params;
         },
@@ -228,6 +284,41 @@
             getObjectResponse.setBody(data.Body);
 
             callback(null, getObjectResponse);
+        },
+
+        _uploadPart: function (me,uploadPartParams, multiPartUpload, objectUploadRequest, uploadId,callback, startTime){
+            me.s3.uploadPart(uploadPartParams, function (err, data) {
+                if (err) {
+                    // do something about aborting
+                    console.log('Failed uploading part: #', uploadPartParams.PartNumber)
+                    console.log(err);
+                } else {
+                    multiPartUpload.Parts[uploadPartParams.PartNumber - 1] = {
+                        ETag: data.ETag,
+                        PartNumber: uploadPartParams.PartNumber
+                    };
+                    
+                    console.log("Completed part", uploadPartParams.PartNumber);
+                    if (--me.partsCount > 0) return;
+                    
+                    var p = {
+                        Bucket : objectUploadRequest.getName(),
+                        Key : objectUploadRequest.getKey(),
+                        UploadId : uploadId,
+                        MultipartUpload : multiPartUpload
+                    };
+                    // time to complete multi part upload
+                    me.s3.completeMultipartUpload(p, function (err, data) {
+                        if (err) {
+                            callback(err);
+                        } else {
+                            var delta = (new Date() - startTime) / 1000;
+                            console.log('Completed upload in', delta, 'seconds');
+                            callback(null, data);
+                        }
+                    });
+                }
+            });
         }
     });
 
