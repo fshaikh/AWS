@@ -10,7 +10,8 @@
     FP.define('AWS.S3.S3Manager', {
         config: {
             s3: {},
-            partsCount:0
+            partsCount: 0,
+            partSize: 5 * 1024 * 1024 // 5 MB partsize . Change depending on scenarios
         },
         
         constructor: function (){
@@ -124,9 +125,7 @@
         // This function uploads a file using multi-part upload algorithm. Client needs to pass the file name or stream
         uploadFileMultiPart : function (objectUploadRequest, callback){
             var me = this;
-            var params = {};
-            var partSize = 5 * 1024 * 1024; // 5 MB partsize . Change depending on scenarios
-            var fileSize = 0;
+
             var fileName = objectUploadRequest.getFileName();
             var uploadId;
             var multiPartUpload = {
@@ -146,27 +145,25 @@
                             if (err) {
                                 callback(err);
                             } else {
-                                fileSize = data.length;
-                                if (fileSize < partSize) {
-                                    partsCount = 1;
-                                } else {
-                                    partsCount = Math.ceil(fileSize / partSize);
-                            }
-                            var partNumber = 0;
-                            for (var start = 0; start < data.length; start += partSize) {
-                                partNumber++;
-                                var end = Math.min(start + partSize, data.length);
-                                var uploadPartParams = {
-                                    Bucket : objectUploadRequest.getName(),
-                                    Key: objectUploadRequest.getKey(),
-                                    PartNumber: partNumber,
-                                    UploadId : uploadId,
-                                    Body : data.slice(start, end)
-                                };
+                                me._setParts(data);
+                                var partNumber = 0;
+                                // iterate the parts and upload each part
+                                for (var start = 0; start < data.length; start += me.partSize) {
+                                    partNumber++;
+                                    // Calculate the end range
+                                    var end = Math.min(start + me.partSize, data.length);
+                                    // Construct the upload param
+                                    var uploadPartParams = {
+                                        Bucket : objectUploadRequest.getName(),
+                                        Key: objectUploadRequest.getKey(),
+                                        PartNumber: partNumber,
+                                        UploadId : uploadId,
+                                        Body : data.slice(start, end)
+                                    };
                                 
                                 console.log('Uploading part: #', uploadPartParams.PartNumber, ', Range start:', start);
-                                me._uploadPart(me, uploadPartParams, multiPartUpload, objectUploadRequest, uploadId, callback, startTime);
-                            }
+                                    me._uploadPart(me, uploadPartParams, multiPartUpload, objectUploadRequest, uploadId, callback, startTime);
+                                }
                             }
                         });
                 }
@@ -206,6 +203,40 @@
             // Make S3 web service call to delete the object
             this.s3.deleteObject(params, callback);
         },
+        
+        // This function fetches the bucket lifecycle configuration
+        getBucketLifecycleConfiguration: function (request, callback){
+            var me = this;
+
+            var params = {
+                Bucket: request.getName()
+            };
+
+            this.s3.getBucketLifecycleConfiguration(params, callback);
+        },
+        
+        // This function puts the bucket lifecycle configuration
+        setBucketLifecycleConfiguration: function (request, callback) {
+            var me = this;
+            
+            var params = {
+                Bucket: request.getName(),
+                LifecycleConfiguration: {
+                    Rules: [{
+                            Prefix: request.getPrefix(),
+                            Status: request.getStatus(),
+                            AbortIncompleteMultipartUpload: {
+                                DaysAfterInitiation: request.getAbortIncompleteMultipartUpload().DaysAfterInitiation,
+                            },
+                            Transitions:me._getTransitions(request)
+                        }
+                    ]
+                }
+            };
+            
+            this.s3.putBucketLifecycleConfiguration(params, callback);
+        },
+
 
         // Private functions:
         _handleListBucketsSuccess: function (data, isDetails, buckets,callback){
@@ -285,6 +316,15 @@
 
             callback(null, getObjectResponse);
         },
+        
+        _setParts: function (data){
+            var fileSize = data.length;
+            if (fileSize < this.partSize) {
+                this.partsCount = 1;
+            } else {
+                this.partsCount = Math.ceil(fileSize / this.partSize);
+            }
+        },
 
         _uploadPart: function (me,uploadPartParams, multiPartUpload, objectUploadRequest, uploadId,callback, startTime){
             me.s3.uploadPart(uploadPartParams, function (err, data) {
@@ -319,6 +359,16 @@
                     });
                 }
             });
+        },
+
+        _getTransitions: function (request){
+            var transitions = [];
+            var rules = request.getTransitions();
+            var length = rules.length;
+            for (var i = 0; i < length; i++) {
+                transitions.push(rules[i]);
+            }
+            return transitions;
         }
     });
 

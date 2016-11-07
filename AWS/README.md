@@ -1,39 +1,60 @@
 ﻿# AWS
 
-Make all calls from nodejs app using Developers group in IAM - DONE
+1 .Basic Operations
+	Make all calls from nodejs app using Developers group in IAM - DONE
 
-Get list of all buckets - DONE
-   Returns all buckets for which the current user has access to. For eg: i created an IAM user under "Developers" group and gave S3FullAccess permission to the group. In the application, used Access Key and Secret Key of the IAM user. listBuckets function returns all the buckets across all the regions.
-   listBuckets returns 2 objects : Buckets -> Bucket -> Name, CreationDate. Owner -> 
+	Get list of all buckets - DONE
+	   Returns all buckets for which the current user has access to. For eg: i created an IAM user under "Developers" group and gave S3FullAccess permission to the group. In the application, used Access Key and Secret Key of the IAM user. listBuckets function returns all the buckets across all the regions.
+	   listBuckets returns 2 objects : Buckets -> Bucket -> Name, CreationDate. Owner -> 
 
-Get bucket properties - DONE
-    use getBucket* functions
+	Get bucket properties - DONE
+		use getBucket* functions
 
-Get list of objects in a bucket - DONE
+	Get list of objects in a bucket - DONE
 
-Create a bucket - DONE
-Modify bucket configuration
-  Tags - DONE
+	Create a bucket - DONE
+	Modify bucket configuration
+	  Tags - DONE
 
-Add files to a bucket 
-  Add image file  - DONE
-  Add txt file    - DONE
-Add metadata to objects - DONE .
-   All tag keys are prefixed with x-amz-meta-
+	Add files to a bucket 
+	  Add image file  - DONE
+	  Add txt file    - DONE
+	Add metadata to objects - DONE .
+	   All tag keys are prefixed with x-amz-meta-
 
-Download object
-   Txt content - DONE
-   Blob content - DONE
-   Image - DONE
+	Download object
+	   Txt content - DONE
+	   Blob content - DONE
+	   Image - DONE
 
-Delete
-  Object - DONE
-  Bucket
+	Delete
+	  Object - DONE
+	  Bucket
 
-Upload large files using multi-part
-Bucket Logging
-S3 Events
-Lifecycle management
+2. Upload using multi-part algorithm
+	Upload large files using multi-part - DONE
+
+3. CORS
+	Understand the concept and basic minimum configuration
+
+4. Lifecycle management - DONE
+       Understand 3 different storage classes : Standard, Standard IA, Glacier
+	   Understand the transitions
+	   API (get, put)
+
+5. Bucket Policy
+6. Replication
+7. Static website using S3
+8. Transfer Acceleration
+9. Logging
+10. Request Payment
+11. Versioning
+12. Torrent support
+13. Signed URLs
+14. HEAD calls against Bucket and Objects
+15. S3 Events
+16. Performance Optimizations
+
 
 
 Pre-reqs

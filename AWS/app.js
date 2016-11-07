@@ -53,25 +53,25 @@ s3Manager.getBuckets(false,function (err, data) {
 //    }
 //});
 
-var objectuploadrequest = FP.create('AWS.S3.ObjectUploadRequest', {
-    fileName: 'C:\\Users\\Fshaikh\\Downloads\\Redis in Action.pdf',
-    key: 'redis',
-    name: 'fromapp',
-    useBody: false,
-    metadata: {
-        'type' : 'pdf',
-        'holder': 'furqan shaikh'
-    },
-    contentType:'application/pdf'
-});
+//var objectuploadrequest = FP.create('AWS.S3.ObjectUploadRequest', {
+//    fileName: 'C:\\Users\\Fshaikh\\Downloads\\Redis in Action.pdf',
+//    key: 'redis',
+//    name: 'fromapp',
+//    useBody: false,
+//    metadata: {
+//        'type' : 'pdf',
+//        'holder': 'furqan shaikh'
+//    },
+//    contentType:'application/pdf'
+//});
 
-s3Manager.uploadFileMultiPart(objectuploadrequest, function (err, data) {
-    if (err) {
-        console.log(err);
-    } else {
-        console.log(data);
-    }
-});
+//s3Manager.uploadFileMultiPart(objectuploadrequest, function (err, data) {
+//    if (err) {
+//        console.log(err);
+//    } else {
+//        console.log(data);
+//    }
+//});
 
 //s3Manager.uploadFile(objectuploadrequest, function (err, data) {
 //    if (err) {
@@ -109,6 +109,24 @@ s3Manager.uploadFileMultiPart(objectuploadrequest, function (err, data) {
 //        console.log(data);
 //    }
 //});
+
+var request = FP.create('AWS.S3.LifecycleRule', { name: 'fromnode' });
+request.setPrefix('RuleFromSDK');
+request.setStatus('Disabled');
+request.setAbortIncompleteMultipartUpload({ DaysAfterInitiation: 1 });
+request.setTransitions([
+    {
+        Days: 30,
+        StorageClass:'STANDARD_IA'
+    },
+    {
+        Days: 61,
+        StorageClass: 'GLACIER'
+    }
+]);
+s3Manager.setBucketLifecycleConfiguration(request, function (err, data) {
+    console.log(data);
+});
 
 
 

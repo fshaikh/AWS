@@ -115,4 +115,26 @@
             mfa:''
         }
     });
+
+    FP.define('AWS.S3.LifecycleRule', {
+        extend: 'AWS.S3.BaseObjectInfo',
+        config: {
+            prefix: '', // Required
+            status: '', // Required. Values: Enabled / Disabled
+            AbortIncompleteMultipartUpload: {
+                DaysAfterInitiation: 0
+            },
+            transitions:[]
+        },
+
+        applyPrefix: function (prefixVal){
+            if (prefixVal === '') {
+                console.log('Prefix is required');
+            } else {
+                return prefixVal;
+            }
+        }
+    });
+
+
 })();
