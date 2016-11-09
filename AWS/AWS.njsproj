@@ -35,6 +35,7 @@
     <Compile Include="config.js" />
     <Compile Include="FPModule-0.1.0.js" />
     <Compile Include="S3Manager.js" />
+    <Compile Include="S3Utility.js" />
     <Content Include="package.json" />
     <Content Include="README.md" />
   </ItemGroup>

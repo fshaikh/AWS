@@ -1,7 +1,9 @@
 ﻿
 var FP = require('./FPModule-0.1.0.js').FP;
 require('./S3Manager.js');
+require('./S3Utility.js');
 var fs = require('fs');
+
 
 
 var s3Manager = FP.create('AWS.S3.S3Manager');
@@ -53,25 +55,25 @@ s3Manager.getBuckets(false,function (err, data) {
 //    }
 //});
 
-//var objectuploadrequest = FP.create('AWS.S3.ObjectUploadRequest', {
-//    fileName: 'C:\\Users\\Fshaikh\\Downloads\\Redis in Action.pdf',
-//    key: 'redis',
-//    name: 'fromapp',
-//    useBody: false,
-//    metadata: {
-//        'type' : 'pdf',
-//        'holder': 'furqan shaikh'
-//    },
-//    contentType:'application/pdf'
-//});
+var objectuploadrequest = FP.create('AWS.S3.ObjectUploadRequest', {
+    fileName: 'C:\\Users\\Fshaikh\\Downloads\\Redis in Action.pdf',
+    key: AWS.S3.S3Utility.getRandomKeyName(8) + 'redis.pdf',
+    name: 'fromapp',
+    useBody: false,
+    metadata: {
+        'type' : 'pdf',
+        'holder': 'furqan shaikh'
+    },
+    contentType:'application/pdf'
+});
 
-//s3Manager.uploadFileMultiPart(objectuploadrequest, function (err, data) {
-//    if (err) {
-//        console.log(err);
-//    } else {
-//        console.log(data);
-//    }
-//});
+s3Manager.uploadFileMultiPart(objectuploadrequest, function (err, data) {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log(data);
+    }
+});
 
 //s3Manager.uploadFile(objectuploadrequest, function (err, data) {
 //    if (err) {
@@ -128,14 +130,14 @@ s3Manager.getBuckets(false,function (err, data) {
 //    console.log(data);
 //});
 
-var signedUrlRequest = FP.create('AWS.S3.SignedUrlRequest', { name: 'fromapp', expires: 900, operation: 'putObject' });
-s3Manager.getSignedUrl(signedUrlRequest, function (err, data) {
-    if (err) {
-        console.log(err);
-    } else {
-        console.log(data);
-    }
-});
+//var signedUrlRequest = FP.create('AWS.S3.SignedUrlRequest', { name: 'fromapp', expires: 900, operation: 'putObject' });
+//s3Manager.getSignedUrl(signedUrlRequest, function (err, data) {
+//    if (err) {
+//        console.log(err);
+//    } else {
+//        console.log(data);
+//    }
+//});
 
 
 
