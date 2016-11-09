@@ -50,7 +50,12 @@
 10. Request Payment
 11. Versioning
 12. Torrent support
-13. Signed URLs
+
+13. Signed URLs - DONE
+       Signed URLs allows to provide a temporary access to S3 bucket/object without a need to create IAM user/sharing AWS credentials.
+	   To generate a url: bucket, object key (not required if PUT), expires, Operations (getObject, putObject)
+	   One can then share the URL. Ex: https://fromapp.s3-us-west-2.amazonaws.com/so-architecture?AWSAccessKeyId=AKIAJVHMXM7IMIOE3CJQ&Expires=1478524540&Signature=eyliob%2F19uQxbLaQAJA4dx2nN7Q%3
+
 14. HEAD calls against Bucket and Objects
 15. S3 Events
 16. Performance Optimizations

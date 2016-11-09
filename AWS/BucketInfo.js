@@ -136,5 +136,14 @@
         }
     });
 
+    FP.define('AWS.S3.SignedUrlRequest', {
+        extend: 'AWS.S3.BaseObjectInfo',
+        config: {
+            key: '',
+            expires: 900, // Number of seconds to expire the pre-signed URL operation. Defaults to 15 minutes
+            operation:''
+        }
+    });
+
 
 })();

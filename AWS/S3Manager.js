@@ -236,6 +236,19 @@
             
             this.s3.putBucketLifecycleConfiguration(params, callback);
         },
+        
+        // This function returns a pre-signed url for a given operation with passed in parameters
+        getSignedUrl: function (request, callback){
+            var me = this;
+            var params = {
+                Bucket: request.getName(),
+                Key: request.getKey(),
+                Expires: request.getExpires(),
+            };
+
+            this.s3.getSignedUrl(request.getOperation(), params, callback);
+
+        },
 
 
         // Private functions:

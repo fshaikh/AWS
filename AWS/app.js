@@ -110,22 +110,31 @@ s3Manager.getBuckets(false,function (err, data) {
 //    }
 //});
 
-var request = FP.create('AWS.S3.LifecycleRule', { name: 'fromnode' });
-request.setPrefix('RuleFromSDK');
-request.setStatus('Disabled');
-request.setAbortIncompleteMultipartUpload({ DaysAfterInitiation: 1 });
-request.setTransitions([
-    {
-        Days: 30,
-        StorageClass:'STANDARD_IA'
-    },
-    {
-        Days: 61,
-        StorageClass: 'GLACIER'
+//var request = FP.create('AWS.S3.LifecycleRule', { name: 'fromnode' });
+//request.setPrefix('RuleFromSDK');
+//request.setStatus('Disabled');
+//request.setAbortIncompleteMultipartUpload({ DaysAfterInitiation: 1 });
+//request.setTransitions([
+//    {
+//        Days: 30,
+//        StorageClass:'STANDARD_IA'
+//    },
+//    {
+//        Days: 61,
+//        StorageClass: 'GLACIER'
+//    }
+//]);
+//s3Manager.setBucketLifecycleConfiguration(request, function (err, data) {
+//    console.log(data);
+//});
+
+var signedUrlRequest = FP.create('AWS.S3.SignedUrlRequest', { name: 'fromapp', expires: 900, operation: 'putObject' });
+s3Manager.getSignedUrl(signedUrlRequest, function (err, data) {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log(data);
     }
-]);
-s3Manager.setBucketLifecycleConfiguration(request, function (err, data) {
-    console.log(data);
 });
 
 
