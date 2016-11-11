@@ -49,6 +49,15 @@
 9. Logging
 10. Request Payment
 11. Versioning
+       Check versioning state on a bucket (disabled, enabled, suspended) - DONE
+	   Enable versioning on a Bucket - DONE
+	   Add object to VE-bucket. Check how version id is created. Add another object with the same key. - DONE
+	   List all objects. See how versioned objects are returned - DONE
+	   Get versioned objects. Get object with a specific version - use getObject and pass VersionId as a parameter
+	   Delete an object. Understand delete marker. Undo delete marker - DONE
+	   Delete object permenantly - call deleteObject and pass each version id - DONE
+	   MFA Delete
+	   How versioning impacts lifecycle policy
 12. Torrent support
 
 13. Signed URLs - DONE
@@ -58,7 +67,7 @@
 
 14. HEAD calls against Bucket and Objects
 15. S3 Events
-16. Performance Optimizations
+16. Performance Optimizations - DONE
 
 
 

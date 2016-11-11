@@ -46,26 +46,63 @@
             });
         },
         
+        // This function returns bucket version info
+        getBucketVersioning: function (request, callback){
+            var params = {
+                Bucket: request.getName()
+            };
+
+            this.s3.getBucketVersioning(params, function (err, data) {
+                if (err) {
+                    callback(err);
+                } else {
+                    var response = FP.create('AWS.S3.BucketVersionInfo');
+                    var status = data.Status;
+                    var mfaDelete = data.MFADelete;
+                    response.setStatus(status ? status : 'Disabled');
+                    response.setMfaDelete(mfaDelete ? mfaDelete : 'Disabled');
+
+                    callback(response);
+                }
+            });
+        },
+        
+        setBucketVersioning: function (request, callback){
+            var params = {
+                Bucket: request.getName(),
+                VersioningConfiguration: {
+                    Status : request.getStatus()
+                }
+            };
+
+            this.s3.putBucketVersioning(params, callback);
+        },
+        
         // This function returns list of objects for a bucket
-        getBucketObjects: function (params, callback){
+        getBucketObjects: function (params,fetchVersions, callback){
             // Array to hold the list of objects for a bucket
             var objects = [];
             var me = this;
             
             
-            
-            // Call S3 web service to retreive the list of objects for a bucket
-            this.s3.listObjects(params, function (err, data) {
-                if (err) {
-                    callback(err);
-                } else {
-                    me._handleGetBucketObjectsSuccess(objects, data);
+            if (fetchVersions) {
+                this.s3.listObjectVersions(params, function (err, data) {
 
-                    callback(null, objects);
-                }
-            });
-
+                });
+            } else {
+                // Call S3 web service to retreive the list of objects for a bucket
+                this.s3.listObjects(params, function (err, data) {
+                    if (err) {
+                        callback(err);
+                    } else {
+                        me._handleGetBucketObjectsSuccess(objects, data);
+                        
+                        callback(null, objects);
+                    }
+                });
+            }
         },
+        
         
         // This function creates a bucket based on the passed in parameters
         createBucket: function (createBucketRequest, callback){
@@ -197,8 +234,12 @@
 
             var params = {
                 Bucket : objectDeleteRequest.getName(),
-                Key : objectDeleteRequest.getKey()
+                Key : objectDeleteRequest.getKey(),
             };
+            var versionId = objectDeleteRequest.getVersionId();
+            if (versionId) {
+                params.VersionId = versionId
+            }
 
             // Make S3 web service call to delete the object
             this.s3.deleteObject(params, callback);

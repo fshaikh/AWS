@@ -19,6 +19,15 @@
         }
     });
     
+    // This class represents Bucket Version info
+    FP.define('AWS.S3.BucketVersionInfo', {
+        extend: 'AWS.S3.BaseObjectInfo',
+        config: {
+            status: '',
+            mfaDelete:''
+        }
+    });
+    
     // This class represents object info . Contains properties for a S3 object. Usage: listObjects API returns array of BucketInfo
     FP.define('AWS.S3.ObjectInfo', {
         extend: 'AWS.S3.BaseObjectInfo',
@@ -112,7 +121,7 @@
     FP.define('AWS.S3.ObjectDeleteRequest', {
         extend: 'AWS.S3.ObjectGetRequest',
         config: {
-            mfa:''
+            mfa: ''
         }
     });
 
