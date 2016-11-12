@@ -170,5 +170,13 @@
         }
     });
 
+    FP.define('AWS.S3.LoggingSetRequest', {
+        extend: 'AWS.S3.BaseObjectInfo',
+        config: {
+            enabled: true,
+            targetBucket: '', // Bucket to send logs to
+            targetPrefix:'' // If multiple buckets are sending logs to the same bucket, specify prefix to distinguish between source bucket logs
+        }
+    });
 
 })();

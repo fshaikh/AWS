@@ -4,7 +4,9 @@ require('./S3Utility.js');
 
 var s3Manager = FP.create('AWS.S3.S3Manager');
 
-uploadObject();
+setBucketLogging('fromapp', true, 'fromapp-logs', 'fromapplogs/');
+//getBucketLogging('fromapp');
+//deleteBucket('fromapp-logs');
 
 s3Manager.getBuckets(false,function (err, data) {
     var length = data.length;
@@ -23,8 +25,8 @@ s3Manager.getBuckets(false,function (err, data) {
     
 });
 
-function bucketExists(){
-    var request = FP.create('AWS.S3.BaseObjectInfo', { name: 'fromapp1' });
+function bucketExists(bucketName){
+    var request = FP.create('AWS.S3.BaseObjectInfo', { name: bucketName });
     s3Manager.isBucketExist(request, function (err, data) {
         if (err) {
             console.log(err);
@@ -38,18 +40,26 @@ function bucketExists(){
     });
 }
 
-function createBucket(){
+function createBucket(bucketName,callback){
     var createBucketRequest = FP.create('AWS.S3.CreateBucketRequest', {
-        name: 'fromapp',
+        name: bucketName,
         location: "us-west-2",
         acl: "authenticated-read"
     });
     s3Manager.createBucket(createBucketRequest, function (err, responseObj) {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log(responseObj.getLocation());
-        }
+        //if (err) {
+        //    console.log(err);
+        //} else {
+        //    console.log(responseObj.getLocation());
+        //}
+        callback(err, responseObj);
+    });
+}
+
+function deleteBucket(bucketName) {
+    var request = FP.create('AWS.S3.BaseObjectInfo', { name: bucketName });
+    s3Manager.deleteBucket(request, function (err, data) {
+        console.log(err, data);
     });
 }
 
@@ -172,8 +182,8 @@ function getSignedUrl(){
     });
 }
 
-function setBucketLifecycleConfig(){
-    var request = FP.create('AWS.S3.LifecycleRule', { name: 'fromnode' });
+function setBucketLifecycleConfig(bucketName,callback){
+    var request = FP.create('AWS.S3.LifecycleRule', { name: bucketName });
     request.setPrefix('RuleFromSDK');
     request.setStatus('Disabled');
     request.setAbortIncompleteMultipartUpload({ DaysAfterInitiation: 1 });
@@ -188,7 +198,7 @@ function setBucketLifecycleConfig(){
         }
     ]);
     s3Manager.setBucketLifecycleConfiguration(request, function (err, data) {
-        console.log(data);
+        callback(err, data);
     });
 }
 
@@ -208,6 +218,38 @@ function getSetBucketVersioning(){
 //        console.log(data);
 //    }
 //});
+}
+
+function getBucketLogging(bucketName){
+    var request = FP.create('AWS.S3.BaseObjectInfo', { name: bucketName });
+    s3Manager.getBucketLogging(request, function (err, data) {
+        console.log(err, data);
+    });
+}
+
+function setBucketLogging(bucketName, enabled,targetBucket,targetPrefix){
+    var request = FP.create('AWS.S3.LoggingSetRequest', { name: bucketName, enabled: enabled,targetBucket, targetPrefix: targetPrefix });
+    s3Manager.setBucketLogging(request, function (err, data) {
+        console.log(err, data);
+    });
+}
+
+// This function creates a bucket for logging and adds lifecycle policy
+function createLoggingBucket(bucketName){
+    // create the bucket
+    createBucket(bucketName, function (err, response) {
+        if (!err) {
+            // put lifecycle configuration
+            setBucketLifecycleConfig(bucketName, function (err, response) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log('Logging bucket created with lifecycle policy');
+                }
+            });
+        }
+    });
+
 }
 
 

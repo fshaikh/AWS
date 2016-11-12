@@ -149,6 +149,14 @@
             this.s3.putBucketTagging(params, callback);
         },
         
+        deleteBucket: function (request, callback){
+            var params = {
+                Bucket: request.getName()
+            };
+
+            this.s3.deleteBucket(params, callback);
+        },
+        
         // This function fetches object metadata.
         getObjectMetadata: function (request, callback){
             var me = this;
@@ -315,6 +323,33 @@
 
             this.s3.getSignedUrl(request.getOperation(), params, callback);
 
+        },
+        
+        // This function sets the logging config
+       setBucketLogging: function(request, callback){
+            var params = {
+                Bucket: request.getName()
+
+            };
+            if (request.getEnabled()) {
+                params.BucketLoggingStatus = {
+                    LoggingEnabled: {
+                        TargetBucket : request.getTargetBucket(),
+                        TargetPrefix : request.getTargetPrefix()
+                    }
+                };
+            }
+
+            this.s3.putBucketLogging(params, callback);
+        },
+        
+        // This function gets the logging config
+        getBucketLogging: function (request, callback){
+            var params = {
+                Bucket:request.getName()
+            };
+
+            this.s3.getBucketLogging(params, callback);
         },
 
 

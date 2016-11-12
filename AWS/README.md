@@ -46,7 +46,11 @@
 6. Replication
 7. Static website using S3
 8. Transfer Acceleration
-9. Logging
+9. Logging - DONE
+      S3 can log all requests to a bucket into a separate bucket.
+	  Create a new bucket for logging. Add lifecycle Policy
+	  In source bucket, enable logging and point to the new log bucket.
+	  Logging can take a few hours to get enabled such that logs will not appear immediately
 10. Request Payment
 11. Versioning
        Check versioning state on a bucket (disabled, enabled, suspended) - DONE
