@@ -107,14 +107,30 @@
             versionId:''
         }
     });
+    
+    FP.define('AWS.S3.ObjectResponseBase', {
+        extend: 'AWS.S3.BaseObjectInfo',
+        config: {
+            size: 0,
+            key: '',
+            versionId: '',
+            deleteMarker: false,
+            metadata: {},
+            storageClass: '',
+            acceptRanges:'',
+            expiration: '',
+            lastModified: '',
+            contentLength: 0,
+            contentType: '',
+            expires: '',
+            partsCount:0
+        }
+    });
 
     FP.define('AWS.S3.ObjectGetResponse', {
         extend: 'AWS.S3.BaseObjectInfo',
         config: {
-            body: {},
-            size:0,
-            key: '',
-            versionId: ''
+            body: {}
         }
     });
 

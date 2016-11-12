@@ -65,10 +65,11 @@
 	   To generate a url: bucket, object key (not required if PUT), expires, Operations (getObject, putObject)
 	   One can then share the URL. Ex: https://fromapp.s3-us-west-2.amazonaws.com/so-architecture?AWSAccessKeyId=AKIAJVHMXM7IMIOE3CJQ&Expires=1478524540&Signature=eyliob%2F19uQxbLaQAJA4dx2nN7Q%3
 
-14. HEAD calls against Bucket and Objects
+14. HEAD calls against Bucket and Objects - DONE
 15. S3 Events
 16. Performance Optimizations - DONE
-
+17. HTTP GET Range
+18. listObjects to fetch using filters, etc
 
 
 Pre-reqs

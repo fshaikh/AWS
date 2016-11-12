@@ -19,7 +19,7 @@
             AWS.config.region = config.region;
             
             // set the access keys
-            AWS.config.update({ accessKeyId: config.credentials.AWSAccessKey, secretAccessKey: config.credentials.AWSSecretKey });
+            AWS.config.update({ accessKeyId: config.credentials.AWSAccessKey, secretAccessKey: config.credentials.AWSSecretKey, useAccelerateEndpoint :true });
 
             this.s3 = new AWS.S3();
         },
@@ -44,6 +44,15 @@
                     }
                 }
             });
+        },
+        
+        // This function determines if a bucket exists and user has permissions to access it. This is a faster way than listBuckets
+        isBucketExist: function (request, callback){
+            var params = {
+                Bucket:request.getName()
+            };
+
+            this.s3.headBucket(params, callback);
         },
         
         // This function returns bucket version info
@@ -140,6 +149,24 @@
             this.s3.putBucketTagging(params, callback);
         },
         
+        // This function fetches object metadata.
+        getObjectMetadata: function (request, callback){
+            var me = this;
+            var params = {
+                Bucket: request.getName(),
+                Key: request.getKey(),
+                VersionId:request.getVersionId()?request.getVersionId : undefined
+            };
+
+            this.s3.headObject(params, function (err, data) {
+                if (err) {
+                    callback(err);
+                } else {
+                    me._handleHeadObjectSuccess(data, callback);
+                }
+            });
+        },
+        
         // This function uploads a simple file to a S3 bucket. Client can either pass a file name or stream
         uploadFile : function (objectUploadRequest, callback){
             var me = this;
@@ -207,7 +234,6 @@
             });
         },
 
-        
         // This function downloads an object given its key and bucket name
         downloadObject: function (objectGetRequest, callback){
             var me = this;
@@ -423,6 +449,22 @@
                 transitions.push(rules[i]);
             }
             return transitions;
+        },
+
+        _handleHeadObjectSuccess: function (data, callback){
+            var response = FP.create('AWS.S3.ObjectResponseBase', {
+                key: data.Key,
+                deleteMarker: data.DeleteMarker,
+                acceptRanges: data.AcceptRanges,
+                lastModified: data.LastModified,
+                contentLength: data.ContentLength,
+                versionId: data.VersionId,
+                contentType: data.ContentType,
+                metadata: data.Metadata,
+                storageClass: data.StorageClass,
+                partsCount:data.PartsCount
+            });
+            callback(null, response);
         }
     });
 

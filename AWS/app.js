@@ -4,7 +4,7 @@ require('./S3Utility.js');
 
 var s3Manager = FP.create('AWS.S3.S3Manager');
 
-deleteObject();
+uploadObject();
 
 s3Manager.getBuckets(false,function (err, data) {
     var length = data.length;
@@ -22,6 +22,21 @@ s3Manager.getBuckets(false,function (err, data) {
     };
     
 });
+
+function bucketExists(){
+    var request = FP.create('AWS.S3.BaseObjectInfo', { name: 'fromapp1' });
+    s3Manager.isBucketExist(request, function (err, data) {
+        if (err) {
+            console.log(err);
+        } else {
+            if (data) {
+                console.log('Bucket ', request.getName(), ' exists');
+            } else {
+                console.log('Bucket ', request.getName(), ' does not exist');
+            }
+        }
+    });
+}
 
 function createBucket(){
     var createBucketRequest = FP.create('AWS.S3.CreateBucketRequest', {
@@ -46,6 +61,21 @@ function addTagsToBucket(){
 
     s3Manager.putTagsToBucket(putBucketTagRequest, function (err, data) {
         console.log(data);
+    });
+}
+
+function getObjectMeta(bucket,key){
+    var request = FP.create('AWS.S3.ObjectGetRequest', {
+        name: bucket,
+        key:key
+    });
+
+    s3Manager.getObjectMetadata(request, function (err, data) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log(data);
+        }
     });
 }
 
