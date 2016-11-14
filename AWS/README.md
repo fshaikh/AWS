@@ -45,6 +45,7 @@
 5. Bucket Policy
 6. Replication
 7. Static website using S3
+         Deferred. Need a domain and understanding of Route 53
 8. Transfer Acceleration
 9. Logging - DONE
       S3 can log all requests to a bucket into a separate bucket.
@@ -71,6 +72,8 @@
 
 14. HEAD calls against Bucket and Objects - DONE
 15. S3 Events
+       Understand events which can be subscribed to (Create,Delete)
+       Deferred - Depends on SNS, SQS, AWS Lambda. Come back when SNS/SQS are completed to create a comprehensive application
 16. Performance Optimizations - DONE
 17. HTTP GET Range
 18. listObjects to fetch using filters, etc
