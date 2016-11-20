@@ -33,6 +33,8 @@
     <Compile Include="app.js" />
     <Compile Include="BucketInfo.js" />
     <Compile Include="config.js" />
+    <Compile Include="EC2BaseObject.js" />
+    <Compile Include="EC2Manager.js" />
     <Compile Include="FPModule-0.1.0.js" />
     <Compile Include="S3Manager.js" />
     <Compile Include="S3Utility.js" />

@@ -1,13 +1,13 @@
 ﻿var FP = require('./FPModule-0.1.0.js').FP;
 require('./S3Manager.js');
 require('./S3Utility.js');
+require('./EC2Manager.js');
 
+
+
+/* S3 related function calls */
 var s3Manager = FP.create('AWS.S3.S3Manager');
-
-setBucketLogging('fromapp', true, 'fromapp-logs', 'fromapplogs/');
-//getBucketLogging('fromapp');
-//deleteBucket('fromapp-logs');
-
+bucketExists('fromapp');
 s3Manager.getBuckets(false,function (err, data) {
     var length = data.length;
     for (var i = 0; i < length; i++) {
@@ -250,6 +250,35 @@ function createLoggingBucket(bucketName){
         }
     });
 
+}
+
+
+
+/* EC2 related function calls */
+var ec2Manager = FP.create('AWS.EC2.EC2Manager');
+
+ec2Manager.describeInstances({}, function (err, data) {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log(data);
+    }
+});
+
+function createVolume(){
+    var request = FP.create('AWS.EC2.CreateVolumeRequest', {
+        size: 1,
+        snapshotId: '',
+        volumeType:'gp2'
+    });
+
+    ec2Manager.createVolume(request, function (err, response) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log(response);
+        }
+    });
 }
 
 
