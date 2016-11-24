@@ -1,0 +1,16 @@
+﻿This project implements a HTTP-based endpoint for AWS SNS Subscriber. Read http://docs.aws.amazon.com/sns/latest/dg/SendMessageToHttp.html for undertanding the details.
+This currently supports : Subscription Confirmation, Notification.
+
+How it works:
+1. Create a Topic in AWS SNS
+2. Deploy this Web API project to a publicly exposed web server. For eg: this was deployed in an EC2 instance.
+3. Create a subscriber , select HTTP as endpoint and provide following url:
+	http://<servername>/<vd>/api/subscriber/handlemessage
+4. When subscriber is created, AWS SNS will send a POST request for Subscriber Confirmation. When successful, the subcriber will be assigned a ARN
+5. Publish to the topic.
+6. AWS SNS will send a POST request for Notification.
+
+Pending:
+1. Unsubscribe Confirmation
+2. Verifying authenticity of request
+3. HTTPS
